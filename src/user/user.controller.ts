@@ -1,14 +1,50 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Put, Request, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
-import { User } from './user.entity';
-import { IdParamDto, UpdateUserDto } from './user.dto';
+import { CreateUserDto, IdParamDto, UpdateUserDto, UserDto } from './models/user.dto';
+import { User } from './models/user.interface';
 
 @Controller('user')
 @ApiTags('Users')
 export class UserController {
   constructor(private readonly usersService: UserService) {
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: 'User Registration',
+    description: 'User registration endpoint'
+  })
+  @ApiBody({
+    description: 'User Dto',
+    type: [CreateUserDto]
+  })
+  async register(@Body() user: CreateUserDto): Promise<UserDto> {
+    return await this.usersService.createUser(user);
+  }
+
+  @Post('login')
+  @ApiOperation({
+    summary: 'Log in',
+    description: 'Log in endpoint, with username or email and password',
+  })
+  @ApiParam({ name: 'usernameOrEmail', type: String, required: true })
+  @ApiParam({ name: 'password', type: String, required: true })
+  async login(@Param() usernameOrEmail: string, @Param() password: string): Promise<any> {
+    return await this.usersService.login(usernameOrEmail, password);
   }
 
   @Get()
@@ -18,7 +54,7 @@ export class UserController {
     summary: 'Show all users',
     description: 'Show all users, for admins',
   })
-  async index(): Promise<User[]> {
+  async index(): Promise<UserDto[]> {
     return await this.usersService.getAllUsers();
   }
 
@@ -29,6 +65,7 @@ export class UserController {
     summary: 'Show a single user',
     description: 'Show all fields of a user, provided an id, for admins',
   })
+  @ApiParam({ name: 'id', type: String })
   async getUserById(@Param() id: number) {
     return await this.usersService.getUserById(id);
   }
