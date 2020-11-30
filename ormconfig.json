@@ -3,9 +3,9 @@
   "host": "mysql-database",
   "port": 3306,
   "username": "admin",
-  "password": "m7M7a6nw50SZh2KF6jqbzX",
+  "password": "your secret goes here",
   "database": "nestjs-backbone",
-  "entities": ["dist/modules/**/*.entity.{js,ts}"],
+  "entities": ["dist/**/models/*.entity.{js,ts}"],
   "migrationsTableName": "migrations",
   "migrations": ["dist/migrations/*.{js,ts}"],
   "cli": {

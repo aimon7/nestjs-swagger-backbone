@@ -60,22 +60,19 @@ export class UserEntity extends BaseEntity {
   })
   profileImage: string;
 
-  @Column({
+  @CreateDateColumn({
     name: 'created_at',
   })
-  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({
+  @UpdateDateColumn({
     name: 'updated_at',
   })
-  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({
+  @DeleteDateColumn({
     name: 'deleted_at',
   })
-  @DeleteDateColumn()
   deletedAt: Date;
 
   @BeforeInsert()
