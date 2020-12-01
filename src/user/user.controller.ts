@@ -12,10 +12,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
-import { CreateUserDto, IdParamDto, UpdateUserDto, UserDto } from './models/user.dto';
-import { User } from './models/user.interface';
+import { CreateUserDto, IdParamDto, UpdateUserDto, UserDto, UserLoginDto } from './models/user.dto';
+import { User, UserRole } from './models/user.interface';
+import { hasRoles } from '../auth/decorator/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('user')
 @ApiTags('Users')
@@ -26,11 +28,11 @@ export class UserController {
   @Post()
   @ApiOperation({
     summary: 'User Registration',
-    description: 'User registration endpoint'
+    description: 'User registration endpoint',
   })
   @ApiBody({
-    description: 'User Dto',
-    type: [CreateUserDto]
+    description: 'Create User Dto',
+    type: CreateUserDto,
   })
   async register(@Body() user: CreateUserDto): Promise<UserDto> {
     return await this.usersService.createUser(user);
@@ -41,14 +43,13 @@ export class UserController {
     summary: 'Log in',
     description: 'Log in endpoint, with username or email and password',
   })
-  @ApiParam({ name: 'usernameOrEmail', type: String, required: true })
-  @ApiParam({ name: 'password', type: String, required: true })
-  async login(@Param() usernameOrEmail: string, @Param() password: string): Promise<any> {
-    return await this.usersService.login(usernameOrEmail, password);
+  async login(@Body() body: UserLoginDto): Promise<any> {
+    return await this.usersService.login(body.usernameOrEmail, body.password);
   }
 
   @Get()
-  @UseGuards(AuthGuard())
+  @hasRoles(UserRole.SUPERADMIN, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Show all users',
@@ -59,7 +60,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Show a single user',
@@ -71,7 +72,7 @@ export class UserController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update an existing User',
@@ -83,7 +84,8 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard())
+  @hasRoles(UserRole.SUPERADMIN, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Delete an existing User',

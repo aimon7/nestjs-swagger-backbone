@@ -1,6 +1,7 @@
 import { IsBoolean, IsDate, IsDateString, IsEmail, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from './user.interface';
+import { Param } from '@nestjs/common';
 
 export class IdParamDto {
   @IsNumber()
@@ -82,6 +83,7 @@ export class CreateUserDto {
   role: UserRole;
 
   @IsString()
+  @ApiPropertyOptional()
   profileImage?: string;
 }
 
@@ -119,4 +121,14 @@ export class UpdateUserDto {
   @IsOptional()
   @ApiPropertyOptional()
   dateDeleted?: Date;
+}
+
+export class UserLoginDto {
+  @IsString()
+  @ApiProperty()
+  usernameOrEmail: string;
+
+  @IsString()
+  @ApiProperty()
+  password: string;
 }

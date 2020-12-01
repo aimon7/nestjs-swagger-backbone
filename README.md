@@ -28,10 +28,18 @@ Also, change the **password** entity in **ormconfig.json**, with your password.
 
 ## Docker Installation
 
-The project can be run in Docker. Simply run the following command, inside the project folder: 
+The project can be run in Docker. <br>
+It runs 3 containers, a MySql, a PhpMyAdmin and a NodeJs container, inside a folder/app. <br>
+Simply run the following command, inside the project folder: 
 ```bash
 $ docker-compose up -d --build
 ```
+
+
+## PhpMyAdmin (container)
+
+If you choose to run the project with Docker, then there is a PhpMyAdmin container. <br>
+You can access it from [localhost:8081](http://localhost:8081) and visualize your database.
 
 
 ## Installation (without docker)

@@ -7,7 +7,10 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({
+      envFilePath: ['.env', ''],
+      isGlobal: true
+    }),
     AuthModule,
     UserModule],
   controllers: [],

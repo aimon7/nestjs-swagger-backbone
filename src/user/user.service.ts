@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { UserEntity } from './models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateResult, DeleteResult, Repository } from 'typeorm';
@@ -33,11 +33,19 @@ export class UserService {
     const { ...newUser } = user;
     newUser.password = passwordHash;
 
-    return this.userRepository.create(newUser)
+    let savedUser: UserDto;
+    try {
+      savedUser = await this.userRepository.save(newUser);
+      console.log(`User ${savedUser.username} is saved successfully`)
+    } catch (e) {
+      throw new ConflictException(`User with the same username or email is already in our database`);
+    }
+
+    return savedUser;
   }
 
   async getUserById(id: number): Promise<UserDto> {
-    return await this.userRepository.findOne(id);
+    return  await this.userRepository.findOne({ id: id });
   }
 
   async updateUser(id: number, user: UpdateUserDto): Promise<UpdateResult> {
@@ -51,19 +59,19 @@ export class UserService {
   async login(usernameOrEmail: string, password: string): Promise<string> {
     const user = await this.validateUser(usernameOrEmail, password);
 
-    if(user)
-      return this.authService.generateJWT(user)
+    if (user)
+      return this.authService.generateJWT(user);
 
     throw new BadRequestException(`Wrong Credentials`);
   }
 
   async validateUser(emailOrUsername: string, password: string): Promise<UserDto> {
-    const user = await this.getUserByUsernameOrEmail(emailOrUsername)
+    const user = await this.getUserByUsernameOrEmail(emailOrUsername);
 
-    if(user) {
+    if (user) {
       const match = await this.authService.comparePasswords(password, user.password);
 
-      if(match) {
+      if (match) {
         const { password, ...result } = user;
         return result;
       }
