@@ -13,7 +13,7 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addBearerAuth()
     .addTag('Authentication')
-    .addTag('')
+    .addTag('Users')
     .build();
 
   const document = SwaggerModule.createDocument(nestApp, options);
