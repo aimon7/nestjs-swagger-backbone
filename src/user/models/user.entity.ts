@@ -68,6 +68,11 @@ export class UserEntity extends BaseEntity {
   @IsString()
   profileImage: string;
 
+  @Column({
+    name: 'validation_string',
+  })
+  validationString: string;
+
   @CreateDateColumn({
     name: 'created_at',
   })

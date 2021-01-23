@@ -8,6 +8,12 @@ export class IdParamDto {
     id: number;
 }
 
+export class EmailParamDto {
+    @IsEmail()
+    @ApiProperty({description: `The user's email`})
+    email: string;
+}
+
 export class UserDto {
     @IsString()
     @ApiProperty({description: `The user's username`})
@@ -39,6 +45,10 @@ export class UserDto {
     @IsOptional()
     @ApiPropertyOptional({description: `A string representing the image location to user's avatar`})
     profileImage?: string;
+
+    @IsString()
+    @ApiProperty({description: `A validation string, so we can validate the user`})
+    validationString: string;
 
     @IsDate()
     @ApiProperty({description: `The user's creation date`})
@@ -86,6 +96,8 @@ export class CreateUserDto {
     @IsOptional()
     @ApiPropertyOptional({description: `A string representing the image location to user's avatar`})
     profileImage?: string;
+
+    validationString: string;
 }
 
 export class UpdateUserDto {

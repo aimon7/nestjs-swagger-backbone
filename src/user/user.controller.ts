@@ -1,19 +1,7 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    HttpException,
-    HttpStatus,
-    Param,
-    Post,
-    Put,
-    Request,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards, } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { CreateUserDto, IdParamDto, UpdateUserDto, UserDto, UserLoginDto } from './models/user.dto';
+import { CreateUserDto, EmailParamDto, IdParamDto, UpdateUserDto, UserDto, UserLoginDto } from './models/user.dto';
 import { User, UserRole } from './models/user.interface';
 import { hasRoles } from '../auth/decorator/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -79,7 +67,7 @@ export class UserController {
         summary: 'Update an existing User',
         description: 'Update an existing User',
     })
-    @ApiParam({name: 'id', type: String})
+    @ApiParam({name: 'id', type: IdParamDto})
     async update(@Param('id') params: IdParamDto, @Body() body: UpdateUserDto) {
         await this.usersService.updateUser(params.id, <Partial<User>>body);
     }
@@ -95,12 +83,16 @@ export class UserController {
     })
     @ApiParam({name: 'id', type: String})
     public async delete(@Request() req, @Param('id') id: number) {
-        if (!id)
-            throw new HttpException(
-                'ID parameter is missing',
-                HttpStatus.BAD_REQUEST,
-            );
-
         await this.usersService.deleteUserById(id);
+    }
+
+    @Post('/reset-password')
+    @ApiOperation({
+        summary: 'Reset password',
+        description: `Reset password endpoint`,
+    })
+    @ApiBody({type: EmailParamDto})
+    async resetPassword(@Body() email: EmailParamDto): Promise<boolean | void> {
+        return await this.usersService.resetPassword(email.email);
     }
 }

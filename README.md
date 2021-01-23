@@ -1,16 +1,22 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) TypeScript framework starter repository, with basic user/auth/jwt implementation. <br>
+**Update 23-Jan-2021** Added email verification and 2 endpoints to check if you passed the credentials to .env file correctly<br>
 Also comes with swagger build in. <br>
 After docker installation, you can see the project at [localhost:5000/apidocs](http://localhost:5000/apidocs/#/). <br>
 This repository uses bind mounts for development, so you can see right away your changes in the code, in the above link. <br>
 
 
-## .env (JWT Secret)
+## .env
 
-To run the project, you must make a **.env** file in the root directory, with the following property: <br>
+To run the project, you must make a **.env** file in the root directory, with the following properties: <br>
 ```bash
 JWT_SECRET=<secret goes here>
+EMAIL_URL=<your domain with https infront>
+NODEMAILER_SENDER=<your Outgoing Mail Service>
+NODEMAILER_PORT=<your Outgoing Mail Server port>
+NODEMAILER_AUTH_USER=<your email address>
+NODEMAILER_AUTH_PASWORD=<your email password>
 ```
 
 

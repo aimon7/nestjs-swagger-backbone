@@ -8,6 +8,7 @@ export interface User {
   emailValidated: boolean;
   role: UserRole;
   profileImage?: string;
+  validationString: string;
   createdAt: Date;
   updatedAt?: Date;
   deletedAt?: Date;

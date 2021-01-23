@@ -37,3 +37,4 @@ lerna-debug.log*
 .env
 mysql.env
 ormconfig.json
+ormconfig-non-docker.json
