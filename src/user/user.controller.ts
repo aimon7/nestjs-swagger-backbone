@@ -92,7 +92,7 @@ export class UserController {
         description: `Reset password endpoint`,
     })
     @ApiBody({type: EmailParamDto})
-    async resetPassword(@Body() email: EmailParamDto): Promise<boolean | void> {
-        return await this.usersService.resetPassword(email.email);
+    async resetPassword(@Body() body: EmailParamDto): Promise<boolean | void> {
+        return await this.usersService.resetPassword(body.email);
     }
 }
