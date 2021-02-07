@@ -13,6 +13,18 @@ export class UserController {
     constructor(private readonly usersService: UserService) {
     }
 
+    @Get()
+    @hasRoles(UserRole.SUPERADMIN, UserRole.ADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        summary: 'Show all users',
+        description: 'Show all users, for admins',
+    })
+    async index(): Promise<UserDto[]> {
+        return await this.usersService.getAllUsers();
+    }
+
     @Post()
     @ApiOperation({
         summary: 'User Registration',
@@ -26,7 +38,7 @@ export class UserController {
         return await this.usersService.createUser(user);
     }
 
-    @Post('login')
+    @Post('/login')
     @ApiOperation({
         summary: 'Log in',
         description: 'Log in endpoint, with username or email and password',
@@ -36,16 +48,14 @@ export class UserController {
         return await this.usersService.login(body.usernameOrEmail, body.password);
     }
 
-    @Get()
-    @hasRoles(UserRole.SUPERADMIN, UserRole.ADMIN)
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @ApiBearerAuth()
+    @Post('/reset-password')
     @ApiOperation({
-        summary: 'Show all users',
-        description: 'Show all users, for admins',
+        summary: 'Reset password',
+        description: `Reset password endpoint`,
     })
-    async index(): Promise<UserDto[]> {
-        return await this.usersService.getAllUsers();
+    @ApiBody({type: EmailParamDto})
+    async resetPassword(@Body() body: EmailParamDto): Promise<boolean | void> {
+        return await this.usersService.resetPassword(body.email);
     }
 
     @Get(':id')
@@ -84,15 +94,5 @@ export class UserController {
     @ApiParam({name: 'id', type: String})
     public async delete(@Request() req, @Param('id') id: number) {
         await this.usersService.deleteUserById(id);
-    }
-
-    @Post('/reset-password')
-    @ApiOperation({
-        summary: 'Reset password',
-        description: `Reset password endpoint`,
-    })
-    @ApiBody({type: EmailParamDto})
-    async resetPassword(@Body() body: EmailParamDto): Promise<boolean | void> {
-        return await this.usersService.resetPassword(body.email);
     }
 }
