@@ -3,7 +3,7 @@ services:
   mysql-database:
     image: mysql
     volumes:
-      - sqldata:/data/db
+      - sqldata:/var/lib/mysql
     env_file:
       - mysql.env
     # ERROR: mysql8 Client does not support authentication protocol requested by server; consider upgrading MySQL client
